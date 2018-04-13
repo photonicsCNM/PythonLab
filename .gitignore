@@ -70,6 +70,11 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Custom Jupyter Notebook outputs
+stop.npy
+Write&Read Data with PyTables.ipynb
+testing.h5
+
 # pyenv
 .python-version
 
