@@ -50,8 +50,6 @@ class MyOpticsLab:
     n_avg = 1
     ylims = (-1, 1)
     
-    using_TTLshutter = False
-
     def __init__(self, os, sl, sbs):
         import getpass
         user = getpass.getuser()  
@@ -94,13 +92,13 @@ class MyOpticsLab:
                                         button_style='', # 'success', 'info', 'warning', 'danger' or ''
                                         tooltip='Pause/Resume', 
                                         icon='pause')            
-            self.play.on_click(self.interrupt)
+            self.play.on_click(self.play_action)
             
             # get initial spectral data
             self.data = self.device.get_spectrum()
             
             # create the plot
-            self.plot, = self.ax.plot(self.data[0], self.data[1], 'o', ms=1)
+            self.plot, = self.ax.plot(self.data[0], self.data[1], ms=1)
             self.ax.set_ylabel('Intensity/counts')
             self.ax.set_xlabel('Wavelength/nm')
             
@@ -113,20 +111,24 @@ class MyOpticsLab:
             
         def close(self):
         
-            self.interrupt()
+            self.play_action()
             self.device.close()
         
-        def interrupt(self):   
-            
+        def play_action(self, b):
             self.streaming = not self.streaming
             if not self.streaming:
                 self.play.icon = 'play'
             else:
                 self.play.icon = 'pause'
-           
+        
+        def interrupt(self):               
+            self.streaming = not self.streaming
+            if not self.streaming:
+                self.play.icon = 'play'
+            else:
+                self.play.icon = 'pause'
         
         def update(self, i): 
-            
             if self.streaming:
                 self.plot.set_data(self.data[0], self.device.get_signal())            
                 self.plot.set_label(self.device.name+' | Integration time: '+str(self.device.IT/1000)+' ms')
@@ -160,70 +162,22 @@ class MyOpticsLab:
             self.device = device_dict[devices]
             style = {'description_width': 'initial'}
             interact(self.actions, 
-                     IT = widgets.BoundedIntText(value = 15,min=15,max = 500, 
+                     IT = widgets.BoundedIntText(value = 100,min=12,max = 60000, 
                                          description='Integration time [ms]', style=style),
-                     ElectricDarkCorrection = False)
+                     ElectricDarkCorrection = False,
+                     NonlinearityCorrection = False)
             
-        def actions(self, IT, ElectricDarkCorrection):
+        def actions(self, IT, ElectricDarkCorrection, NonlinearityCorrection):
             self.device.set_IT(IT)
-            self.DarkCurrentCorrect = ElectricDarkCorrection
+            self.device.DarkCurrentCorrection = ElectricDarkCorrection
+            self.device.NonlinearityCorrection = NonlinearityCorrection
     
     def show_DataFeed(self):
         controls = [OO[device].stream.play for device in [key for key in OO.keys()]]
         display(widgets.Box(controls))
         plt.show()      
             
-# =============================================================================
-# Prior Animation creating Absorbance plots
-# =============================================================================
 
-    def anim_I(self, i):
-                   
-        sp.set_IT(MyLab.IT)
-        #self.ax = fig.add_subplot(2,2,locate)
-        WL_array = sp.WL
-        
-        if self.i0 == 'undefined':
-            Intensities = sp.avg_spec(self.n_avg)['mean spec']
-        else:
-            Intensities = sp.avg_spec(self.n_avg)['mean spec']-self.i0['dark']
-            
-        self.Graphic_Livefeed.axes[0].clear()        
-        self.Graphic_Livefeed.axes[0].set_title('Intensity')
-        self.Graphic_Livefeed.n_plots = [0 for n in range(2)]
-        self.Graphic_Livefeed.line('$I$', WL_array, Intensities, subplot=0)
-    
-    def anim_A(self, i):
-        
-        if self.i0 == 'undefined':
-            pass
-        else:
-    
-            #self.ax = fig.add_subplot(2,2,locate)
-            WL_array = sp.WL
-            i = sp.avg_spec(self.n_avg)
-            Intensities = (
-                i['mean spec']/i['IT']*1000)-self.i0['dark']/self.i0['IT']*1000
-            Reference = self.i0['mean spec']/self.i0['IT']*1000
-            Absorbance = MyFuncs.Absorbance(Intensities, Reference)
-            
-            self.Graphic_Livefeed.axes[1].clear()
-            self.Graphic_Livefeed.axes[1].set_title('Absorbance')
-            self.Graphic_Livefeed.axes[1].set_ylim(self.ylims)
-            self.Graphic_Livefeed.line('$A$',WL_array, Absorbance, subplot=1)
-        
-
-    def AbsorbanceAnimation(self):
-        
-        self.Graphic_Livefeed = MyFigure(['Intensity', 'Absorbance'], 2)
-        self.Graphic_Livefeed.fig.suptitle('Live data feed')        
-        I_live = animation.FuncAnimation(self.Graphic_Livefeed.fig, self.anim_I, 
-                                       interval = 1000)
-        A_live = animation.FuncAnimation(self.Graphic_Livefeed.fig, self.anim_A, 
-                                       interval = 1000)
-#        plt.show()
-        
-        return I_live, A_live
 # =============================================================================
 # 
 # =============================================================================
@@ -291,8 +245,8 @@ if __name__=="__main__":
     if len(MyLab.devices) > 0:
         # Setup Spectrometers
         from MySpectrometer import MySpectrometer   
-        MyLab.NonlinCorrect = False
-        MyLab.DarkCurrentCorrect = False
+        #MyLab.NonlinCorrect = False
+        #MyLab.DarkCurrentCorrect = False
         OO = {}
         # Create ViewPort for live plot of intensities
         ViewPort = plt.figure('Live Data Feed', figsize=(8,6))
