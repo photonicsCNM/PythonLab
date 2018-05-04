@@ -9,11 +9,9 @@ Created on Tue Dec 13 15:06:42 2016
 """
 
 class MyFuncs():
-    
-    def __init__():
-        import numpy as np
         
     def Loss(i, i0):
+        import numpy as np
         try:
             assert(type(i0)==np.float64 or type(i0)==np.ndarray or type(i0)==float)
             assert(type(i)==np.float64 or type(i)==np.ndarray  or type(i)==float)   
@@ -36,6 +34,7 @@ class MyFuncs():
                 print('invalid input: float or array input with equal length expected')
             
     def Absorbance(i, i0):
+        import numpy as np
         try:
             assert(type(i0)==np.float64 or type(i0)==np.ndarray or type(i0)==float)
             assert(type(i)==np.float64 or type(i)==np.ndarray  or type(i)==float)   
@@ -58,10 +57,25 @@ class MyFuncs():
                 print('invalid input: float input expected')
                 
     def load_dict(filename):
+        import numpy as np
         # load dictionary in 'filename.npy' saved with np.save
         dictionary = np.load(str(filename)+'.npy').item()
         print('loaded dictionary with', dictionary.keys())
         return dictionary
+    
+    def read_access_h5():
+        import tables
+        # set database name:
+        read_from = input('Enter the name and location of your database: ')
+        try:
+            # create File object and assign to variable db
+            db = tables.open_file(read_from+".h5", mode="r")
+            print('Database loaded.')
+            return db
+        except OSError:
+            print('ERROR: File does not exist.')
+        except:
+            print('ERROR: File already open somewhere else.')   
     
     def fit_linear( x, y, points, fig = None):
                 
