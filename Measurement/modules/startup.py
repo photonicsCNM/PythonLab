@@ -228,34 +228,6 @@ class MyFigure(object):
         self.n_secondary_plots = [0 for n in range(len(self.axes))]
         
 ###======================================================================================
-#import ipywidgets as widgets
-#from ipywidgets import interact
-#from IPython.display import display
-
-class LoopControlButtons():
-    def __init__(self):
-        import ipywidgets as widgets
-        from ipywidgets import interact
-        from IPython.display import display
-        
-        self.stop = False
-        np.save('stop', self.stop)
-        self.button1 = widgets.Button(description='Stop/Resume')
-        self.button1.on_click(self.stop_clicked)
-        self.button2 = widgets.Button(description='Abort')
-        self.button2.on_click(self.abort_clicked)
-        
-    def stop_clicked(self, b):
-        self.stop = not self.stop
-        np.save('stop', self.stop)
-        
-    def abort_clicked(self, b):
-        np.save('stop', 'abort')
-        
-    def show(self):
-        display(self.button1)
-        display(self.button2)
-        
 ###======================================================================================
 
 def repeat_dummy(sequence, lab, period_minutes = .05, write_to = 'database', zone=None):

@@ -13,6 +13,7 @@ def repeat(sequence, spectrometer, period_minutes = .05, write_to = 'database', 
        
     # initial time t0:
     import time
+    import numpy as np
     try:
         t0 = np.load('times.npy')
     except FileNotFoundError:
@@ -34,6 +35,10 @@ def repeat(sequence, spectrometer, period_minutes = .05, write_to = 'database', 
     db.flush()    
     
     # A status button and progressbar is displayed to indicate the state of the loop
+    import ipywidgets as widgets
+    from ipywidgets import interact
+    from IPython.display import display
+
     status = widgets.Button(description='Running',button_style = 'success', disabled=True)
     progress = widgets.FloatProgress(
                 value=0, min=0.0, max=100.0, step=0.01,
