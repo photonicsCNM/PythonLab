@@ -75,7 +75,7 @@ def repeat(sequence, spectrometer, period_minutes = .05, write_to = 'database', 
             if experiment_name==None:                
                 db_entry = db.create_array(db.root,entry_name, I['mean_spec'], 'Intensities at time '+str(round(t/3600, 2))+' [h]')
                 db_entry.attrs['time_s'] = round(t, 2)
-                for attribute in ['Integration time [ms]', 'N']:
+                for attribute in ['IT', 'N']:
                     db_entry.attrs[attribute] = I[attribute]   
             else:
                 db_entry = db.create_array(db.root,entry_name, I['mean_spec'], 'Intensities at time '+str(t/3600)+' [h]')

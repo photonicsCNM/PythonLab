@@ -26,72 +26,57 @@ class MySpectrometer(object):
         self.WL = self.access.wavelengths() 
         self.parent = parent
         self.IT = self.parent.IT
+        self.NonlinearityCorrection = False
+        self.DarkCurrentCorrection = False
         self.stream = None
         
     
     def close(self):
-        
         self.access.close()
         
+    
     def start_stream(self, ViewPort, turn):
-            
         self.stream = self.parent.LiveFeed(self, ViewPort, turn)
         self.stream.start()
-        
+    
+    
     def light_on(self):
-        
-        if self.parent.using_TTLshutter:
-            self.access.lamp_set_enable(False)
-        else:
-            self.access.lamp_set_enable(True)
-        
-        
+        self.access.lamp_set_enable(True)
+    
+    
     def light_off(self):
-        
-        if self.parent.using_TTLshutter:
-            self.access.lamp_set_enable(True)
-        else:
-            self.access.lamp_set_enable(False)
+        self.access.lamp_set_enable(False)
        
     
     def set_IT(self, integration_time_milisec):
-        
         integration_time = 1000*integration_time_milisec
         self.IT = integration_time
         self.access.integration_time_micros(self.IT)
     
     
-    def get_signal(self):    
-        
-        signal = self.access.intensities(correct_dark_counts=self.parent.DarkCurrentCorrect,
-                                         correct_nonlinearity=self.parent.NonlinCorrect)
-        
+    def get_signal(self):            
+        signal = self.access.intensities(correct_dark_counts=self.DarkCurrentCorrection,
+                                         correct_nonlinearity=self.NonlinearityCorrection)
         return signal
         
     def get_spectrum(self):    
-        
-        spectrum = self.access.spectrum(correct_dark_counts=self.parent.DarkCurrentCorrect,
-                                        correct_nonlinearity=self.parent.NonlinCorrect)
-        
+        spectrum = self.access.spectrum(correct_dark_counts=self.DarkCurrentCorrection,
+                                        correct_nonlinearity=self.NonlinearityCorrection)
         return spectrum
     
     def get_dark(self):
-        
         self.access.lamp_set_enable(False)        
-        dark =  self.access.intensities(correct_dark_counts=self.parent.DarkCurrentCorrect,
-                                        correct_nonlinearity=self.parent.NonlinCorrect)
-        
+        dark =  self.access.intensities(correct_dark_counts=self.DarkCurrentCorrection,
+                                        correct_nonlinearity=self.NonlinearityCorrection)
         return dark
             
 
     def avg_spec(self, n):
-        
         spectra=[]
         for i in range(n+1):
             spectra.append(self.get_signal())
         yerr = np.nanstd(spectra[1:], axis=0)
         mean = np.nanmean(spectra[1:], axis=0)
-        
         return {'mean_spec':mean, 'std_dev':yerr, 'N':n, 'IT':self.parent.IT}
     
     def avg_dark_corrected(self, n): 
@@ -112,7 +97,6 @@ class MySpectrometer(object):
         
         i_corrected = i['mean spec'] - dark['mean spec']
         i['mean spec'] = i_corrected
-        
         
         return i
         print('Dark-corrected intensity acquired.')
