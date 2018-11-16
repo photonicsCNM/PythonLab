@@ -1,5 +1,22 @@
-# MyOpticsLab
-Jupyter Frontend for control of Ocean Optics spectrometers based on [python-seabreeze](https://github.com/ap--/python-seabreeze).
+# PythonLab 
+*Automate laboratory tasks with Python*
 
+---
 ## Contents
-Class definitions of [MyOpticsLab](https://github.com/TobiasNils/MyOpticsLab/blob/master/lib/MyOpticsLab.py), i. e. spectrometers and helper functions for visual feedback are located in the folder "lib", "Measurement" contains [Jupyter](https://jupyter.org/) notebooks for interactive control. A live data ViewPort is implemented using [Matplotlib](https://matplotlib.org/index.html) and its [animation package](https://matplotlib.org/api/_as_gen/matplotlib.animation.FuncAnimation.html). Automated (and manual) data storage is implemented using [PyTables](https://github.com/PyTables/PyTables), interactive controls of spectrometer parameters make use of [ipywidgets](https://github.com/jupyter-widgets/ipywidgets).
+
+
+### MyLab
+ 
+Python Abstraction layer for device control. 
+For now i.e.
+
+ - *Ocean Optics spectrometers* (based on 
+[python-seabreeze](https://github.com/ap--/python-seabreeze)), 
+- *[Micos Corvus Eco](http://micosusa.com/old/Con_o_02.html) Microstep Controller* and 
+respective [axes](https://www.physikinstrumente.com/en/products/linear-stages/
+stages-with-stepper-dc-brushless-dc-bldc-motors/vt-80-linear-stage-1206300/) 
+(inspired by [Micos.py](https://gist.github.com/pklaus/3955382)),
+
+as well as some code for accessing video devices like USB-cameras. 
+
+
