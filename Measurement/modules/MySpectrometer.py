@@ -35,8 +35,8 @@ class MySpectrometer(object):
         self.access.close()
         
     
-    def start_stream(self, ViewPort, turn):
-        self.stream = self.parent.LiveFeed(self, ViewPort, turn)
+    def start_stream(self, ViewPort, Plot):
+        self.stream = self.parent.LiveFeed(self, ViewPort, Plot)
         self.stream.start()
     
     
@@ -59,6 +59,17 @@ class MySpectrometer(object):
                                          correct_nonlinearity=self.NonlinearityCorrection)
         return signal
         
+        
+    def multiple_spectra(self, n):
+        spectra=[]
+        for i in range(n+1):
+            spectra.append(self.get_signal())
+        if n==1:
+            return {'intensities':spectra[1:][-1], 'N':n, 'IT':self.IT, 'detector':self.name}
+        else:
+            return {'intensities':spectra[1:], 'N':n, 'IT':self.IT, 'detector':self.name}
+
+        
     def get_spectrum(self):    
         spectrum = self.access.spectrum(correct_dark_counts=self.DarkCurrentCorrection,
                                         correct_nonlinearity=self.NonlinearityCorrection)
@@ -69,7 +80,7 @@ class MySpectrometer(object):
         dark =  self.access.intensities(correct_dark_counts=self.DarkCurrentCorrection,
                                         correct_nonlinearity=self.NonlinearityCorrection)
         return dark
-            
+    
 
     def avg_spec(self, n):
         spectra=[]
@@ -77,7 +88,7 @@ class MySpectrometer(object):
             spectra.append(self.get_signal())
         yerr = np.nanstd(spectra[1:], axis=0)
         mean = np.nanmean(spectra[1:], axis=0)
-        return {'mean_spec':mean, 'std_dev':yerr, 'N':n, 'IT':self.parent.IT}
+        return {'mean_spec':mean, 'std_dev':yerr, 'N':n, 'IT':self.IT}
     
     def avg_dark_corrected(self, n): 
         """

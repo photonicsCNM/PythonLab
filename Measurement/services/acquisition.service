@@ -1,0 +1,12 @@
+[Unit]
+Description = Re-/start Data acquisition, Syncing and Jupyter notebook server after reboot
+After = network.target, local-fs.target
+
+[Service]
+#Type=forking
+User=pi
+WorkingDirectory = /home/pi/notebooks/MyOpticsLab/Measurement/
+ExecStart=/home/pi/berryconda3/bin/python3 /home/pi/notebooks/MyOpticsLab/Measurement/acquisition_autostart.py &
+
+[Install]
+WantedBy = multi-user.target

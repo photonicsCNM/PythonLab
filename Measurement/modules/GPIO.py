@@ -1,14 +1,21 @@
 class Switch():
+    RPi = __import__('RPi.GPIO')
+    GPIO = RPi.GPIO
     
-    def __init__(self, BCM_number):
+    def __init__(self, BCM_number, mode = 'bcm'):
         self.BCM_number = BCM_number
-        from subprocess import call
-        self.call = call
+        self.GPIO.setwarnings(False)
+        if mode == 'bcm':
+            self.GPIO.setmode(self.GPIO.BCM)
+        elif mode == 'board':
+            self.GPIO.setmode(self.GPIO.BOARD)
+        self.GPIO.setup(self.BCM_number, self.GPIO.OUT) 
         
     def high(self):
-        cmds = 'import RPi.GPIO as GPIO; GPIO.setmode(GPIO.BCM); GPIO.setup(%i, GPIO.OUT); GPIO.output(%i, 1)' %(self.BCM_number,self.BCM_number)
-        self.call(["/usr/bin/python3", "-c", cmds] )
-
+        self.GPIO.output(self.BCM_number,1)
+        
     def low(self):
-        cmds = 'import RPi.GPIO as GPIO; GPIO.setmode(GPIO.BCM); GPIO.setup(%i, GPIO.OUT); GPIO.output(%i, 0)' %(self.BCM_number,self.BCM_number)
-        self.call(["/usr/bin/python3", "-c", cmds] )
+        self.GPIO.output(self.BCM_number,0)
+
+        
+
