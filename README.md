@@ -21,6 +21,7 @@ stages-with-stepper-dc-brushless-dc-bldc-motors/vt-80-linear-stage-1206300/)
 - [Spectra Acquisition]()
 - [Stage Control]()
 - [Camera Control]()
+- [Camera & Stage Control]()
 
 For complete automation, check out the related [RPi branch](). 
 
