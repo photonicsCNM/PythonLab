@@ -17,7 +17,7 @@ class MyDB():
         self.selected_tags = []
         self.selected_experiment = []
         #self.list_tags()
-        self.spectrometers = self.np.load('detectors.npz', mmap_mode='r')        
+        self.spectrometers = self.np.load('.detectors.npz', mmap_mode='r')        
             
     def update(self):
         for root, directories, filenames in self.os.walk(self.base_dir):
@@ -25,7 +25,7 @@ class MyDB():
                 pass
             else:
                 for filename in filenames: 
-                    if filename[-3:]=='npz' and filename not in self.data.keys():
+                    if filename[-3:]=='npz' and filename not in self.data.keys() and filename != '.detectors.npz':
                         self.data[self.base64.b64encode(self.hashlib.md5(str.encode(filename)).digest()).decode("utf-8") ]=  self.os.path.join(root,filename)
                     else:
                         pass
@@ -42,22 +42,11 @@ class MyDB():
 
       
             
-    def list_experiments(self):
-        
+    def list_experiments(self):        
         for id_ in self.data.keys():
             with self.np.load(self.data[id_], mmap_mode='r') as dataset:
-                is_sensor_data=False
                 if 'tags' in dataset.keys():
-                    for tag in dataset['tags']:
-                        text = str(tag)
-                        if self.normalize_caseless('ref') in self.normalize_caseless(text):
-                            is_sensor_data=True
-                        elif self.normalize_caseless('biofilm') in self.normalize_caseless(text):
-                            is_sensor_data=True
-                        else:
-                            pass                            
-                    if is_sensor_data:
-                        self.tags.append(dataset['tags'][0])
+                    self.tags.append(dataset['tags'][0])
                 else:
                     pass
         self.tags = set(self.tags)
@@ -65,8 +54,7 @@ class MyDB():
                 
         def select(tag):
             self.selected_experiment = (tag)
-            self.readouts = {'biofilm': MyQuery(self, self.selected_experiment, 'biofilm'),
-                            'reference': MyQuery(self, self.selected_experiment, 'ref')}
+            self.readouts = MyQuery(self, self.selected_experiment)
             #selected.children[0].options = self.selected_experiment[::-1]
                 
         options=self.tags+['']
@@ -188,13 +176,13 @@ class MyQuery():
         filtered_query = []
         for npz in self.result:
             with self.np.load(npz, mmap_mode='r') as result:
+                is_there=[]
                 for arg in keywords:
-                    is_there=[]
                     for key in result.keys():
                         if arg in result[key]:
                             is_there.append(True)
                 if len(is_there)==len(keywords):
-                        filtered_query.append(result)  
+                        filtered_query.append(npz)  
         if len(filtered_query)==1:
             filtered_query = filtered_query[0]
         return filtered_query
@@ -215,13 +203,15 @@ class MyQuery():
         result = test  
         
         def getKey(npz):
-            if getter_func:
+            if getter_func and not index:
                 with self.np.load(npz, mmap_mode='r') as item:
                     return getter_func(item[key])
-            elif index:
-                
+            elif index and not getter_func:                
                 with self.np.load(npz, mmap_mode='r') as item:
                     return item[key][index]
+            elif index and getter_func:
+                with self.np.load(npz, mmap_mode='r') as item:
+                    return getter_func(item[key][index])
             else:
                 with self.np.load(npz, mmap_mode='r') as item:
                     return item[key]
