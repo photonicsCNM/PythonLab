@@ -1,5 +1,5 @@
 {
-    "experiment": "TwinChips_X23_Calibration20181123_Red",
+    "experiment": "TwinChips_X24_Calibration20181123_Red",
     "detector": "USB2000plusXR",
     "sensors": {
         "left": {
@@ -18,5 +18,5 @@
         }
     },
     "dir": "/home/pi/notebooks/MyOpticsLab/Measurement/TwinChips/",
-    "t0": 1542968949.9307046
+    "t0": 1542986059.15888
 }
