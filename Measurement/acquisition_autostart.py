@@ -17,7 +17,7 @@ import json
 from datetime import datetime
 
 #import matplotlib.pyplot as plt
-#from matplotlib.animation import FuncAnimation 
+#from matplotlib.animation import FuncAnimation
 #import ipywidgets as widgets
 #from ipywidgets import interact
 #from IPython.display import display
@@ -47,12 +47,12 @@ def print_log(text):
         incidence = text + '\n'
         log.write(incidence)
 
-print_log('Re-initialising data acquisition after reboot.')
+print_log('Reinitialising data acquisition after reboot.')
 
 saving_to = []
 with open(log_dir+log_file, 'r') as log:
     for line in log.readlines():
-        if 'Saving data to: ' in line: 
+        if 'Saving data to: ' in line:
             saving_to.append(line.split(': ')[-1].split('\n')[0])
 saving_to = saving_to[-1]
 
@@ -67,14 +67,14 @@ MyLab = MyOpticsLab(os, sl=None, sbs=sbs)
 
 if len(MyLab.devices) > 0:
     # Setup Spectrometers
-    from modules.MySpectrometer import MySpectrometer   
+    from modules.MySpectrometer import MySpectrometer
     MyLab.NonlinCorrect = False
     MyLab.DarkCurrentCorrect = False
     OO = {}
-    
+
     # Create ViewPort for live plot of intensities
 #    ViewPort = plt.figure('Live Data Feed', figsize=(8,6))
-    
+
 #    spec_count = len(MyLab.devices)
 #    if spec_count == 1:
 #        slots = [ViewPort.subplots(spec_count, sharex=True, sharey=True)]
@@ -93,10 +93,10 @@ if len(MyLab.devices) > 0:
 
 else:
     print('\n No Ocean Optics devices connected.')
-    
+
 
 # =============================================================================
-# Initiate Measurement 
+# Initiate Measurement
 # =============================================================================
 
 # load settings from file
@@ -105,11 +105,3 @@ with open(saving_to +'acquisition.settings', 'r') as settings_bak:
 
 M = Measurement(OO, **settings)
 M.start_repetition()
-
-
-
-
-
-
-
-
