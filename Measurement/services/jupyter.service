@@ -6,10 +6,13 @@ After = multi-user.target
 #OnBoot = 30
 
 [Service]
-#Type=forking
+Type=simple
 User=pi
-#WorkingDirectory = /home/pi/notebooks/MyOpticsLab/Measurement/
-ExecStart=/home/pi/berryconda3/bin/jupyter notebook &
+Group=pi
+WorkingDirectory = /home/pi/notebooks
+ExecStart=/home/pi/berryconda3/bin/jupyter notebook
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy = multi-user.target

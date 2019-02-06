@@ -3,10 +3,13 @@ Description = Re-/start Data acquisition, Syncing and Jupyter notebook server af
 After = network.target, local-fs.target
 
 [Service]
-#Type=forking
+Type=simple
 User=pi
+Group=pi
 WorkingDirectory = /home/pi/notebooks/MyOpticsLab/Measurement/
-ExecStart=/home/pi/berryconda3/bin/bokeh /home/pi/notebooks/MyOpticsLab/Measurement/dashboard_autostart.py &
+ExecStart=/home/pi/berryconda3/bin/bokeh /home/pi/notebooks/MyOpticsLab/Measurement/dashboard_autostart.py
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy = multi-user.target
